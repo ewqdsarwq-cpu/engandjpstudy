@@ -1779,12 +1779,18 @@
     const PROFILE_INDEX_KEY = "scuderia_profiles_index_v5";
     const GOOGLE_CLIENT_ID_KEY = "scuderia_google_oauth_client_id";
     const HOST_SERVER_URL_KEY = "scuderia_host_central_server_url";
-    const DEFAULT_HOST_SERVER_URL = ""; // 호스트가 배포 전 직접 입력하거나 모달에서 1회 저장
+    const DEFAULT_HOST_SERVER_URL = ["https://script", ".google.com", "/macros/s/AKfycbwu3r_IGqY3jl8oqXPjenxwxdX8bLjmCnik7fW2MlCCe4gPIHg4vTCzToagvBRpAMY2/exec"].join("");
 
-    let activeUserId = "user_main";
-    let registeredUserIds = ["user_main"];
+    let activeUserId = "";
+    let registeredUserIds = [];
     let googleAuthState = { signedIn: false, email: "", name: "", accessToken: "", tokenClient: null };
     let hostSyncState = { serverUrl: "", lastSyncedAt: "", syncing: false };
+
+    function generateNewGuestId() {
+      const rand = Math.random().toString(36).slice(2, 8);
+      const ts = Date.now().toString(36).slice(-4);
+      return "guest_" + ts + rand;
+    }
 
     function getHostServerUrl() {
       try {
@@ -1821,7 +1827,7 @@
       };
     }
 
-    let appState = createDefaultState("user_main");
+    let appState = createDefaultState("guest_init");
     let timerInterval = null;
     let isTimerRunning = false;
     let fcCurrentIndex = 0;
@@ -1839,7 +1845,8 @@
     let stage4QuizAnswers = {};
     let stage4QuizSubmitted = false;
 
-    function loadState(targetUid = activeUserId) {
+    function loadState(targetUid) {
+      let isBrandNewGuest = false;
       try {
         const rawIdx = localStorage.getItem(PROFILE_INDEX_KEY);
         if (rawIdx) {
@@ -1848,10 +1855,20 @@
             registeredUserIds = pIdx.userIds.map(sanitizeUserId);
           }
           if (pIdx && pIdx.activeUserId) activeUserId = sanitizeUserId(pIdx.activeUserId);
+        } else {
+          isBrandNewGuest = true;
         }
-      } catch (e) {}
-      activeUserId = sanitizeUserId(targetUid || activeUserId || "user_main");
+      } catch (e) { isBrandNewGuest = true; }
+
+      if (targetUid) {
+        activeUserId = sanitizeUserId(targetUid);
+      } else if (!activeUserId) {
+        activeUserId = generateNewGuestId();
+      }
       if (!registeredUserIds.includes(activeUserId)) registeredUserIds.push(activeUserId);
+      if (isBrandNewGuest) {
+        try { localStorage.setItem(PROFILE_INDEX_KEY, JSON.stringify({ activeUserId, userIds: registeredUserIds })); } catch (e) {}
+      }
 
       let loaded = null;
       try {
@@ -1873,7 +1890,7 @@
       const url = getHostServerUrl();
       if (!url) return;
       clearTimeout(hostSyncTimeout);
-      hostSyncTimeout = setTimeout(() => saveProfileToHostServer(true), 1200);
+      hostSyncTimeout = setTimeout(() => saveProfileToHostServer(true), 600);
     }
 
     function saveState() {
@@ -3130,9 +3147,29 @@
         const savedHostUrl = getHostServerUrl();
         if (savedHostUrl) {
           document.getElementById("hostServerUrlInput").value = savedHostUrl;
-          document.getElementById("driveSyncBadgeText").textContent = "호스트 중앙 DB 연결됨";
+          document.getElementById("driveSyncBadgeText").textContent = "호스트 중앙 DB 실시간 연결됨";
+          loadProfileFromHostServer(activeUserId, true);
         }
       } catch (e) {}
+
+      // Flush latest progress to Host Drive when tab is hidden or closed
+      const flushHostKeepalive = () => {
+        const url = getHostServerUrl();
+        if (!url || !activeUserId) return;
+        try {
+          const cleanUid = sanitizeUserId(activeUserId);
+          const enData = safeJsonParse(localStorage.getItem("scuderia_en_" + cleanUid)) || (activeStudioLang === "en" ? appState : createDefaultState(cleanUid));
+          const jaData = safeJsonParse(localStorage.getItem("scuderia_jp_" + cleanUid)) || (activeStudioLang === "ja" ? appState : createDefaultState(cleanUid));
+          fetch(url, {
+            method: "POST",
+            keepalive: true,
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ userId: cleanUid, email: googleAuthState.email || "", en: enData, ja: jaData })
+          }).catch(() => {});
+        } catch (e) {}
+      };
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushHostKeepalive(); });
+      window.addEventListener("beforeunload", flushHostKeepalive);
 
       // 50-Round Selector & Milestone Jumpers
       const roundSel = document.getElementById("roundSelectorSelect");
