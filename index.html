@@ -92,7 +92,6 @@
             <button id="btnOpenIdModal" type="button" class="px-2 py-0.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">+ ID</button>
           </div>
           <button type="button" id="btnGoogleAuthStatus" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold flex items-center gap-1.5 transition"><span id="googleAuthDot" class="w-2 h-2 rounded-full bg-amber-300"></span><span id="googleAuthLabel">Google 로그인</span></button>
-          <button type="button" id="btnOpenHostAdminModal" class="px-2.5 py-1.5 rounded-xl bg-zinc-900 text-amber-300 border border-amber-400/40 text-xs font-bold transition" title="호스트 중앙 서버 및 관리자">⚙️ 호스트</button>
           <button type="button" id="btnToggleThemeStyle" class="px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-200 transition" title="테마 전환">🌓</button>
           <span id="saveStatusText" class="hidden"></span>
         </div>
@@ -104,7 +103,6 @@
           <button type="button" data-tab="grammar" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 text-slate-600 hover:bg-slate-200/70"><span>✍️</span> <span>문법</span></button>
           <button type="button" data-tab="exam" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 text-slate-600 hover:bg-slate-200/70"><span>📝</span> <span>실전 시험</span></button>
           <button type="button" data-tab="wrongnote" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 text-slate-600 hover:bg-slate-200/70"><span>🔖</span> <span>오답노트</span> <span id="wrongCountBadge" class="ml-0.5 px-1.5 py-0.2 rounded-full text-[11px] bg-rose-100 text-rose-700 font-bold">0</span></button>
-          <button type="button" data-tab="data" class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 text-slate-600 hover:bg-slate-200/70"><span>💾</span> <span>단어추가 · 백업</span></button>
         </nav>
       </div>
     </header>
@@ -255,65 +253,18 @@
           <div id="wrongNoteContainer" class="space-y-4"></div>
         </div>
       </section>
-      <section id="tab-data" class="tab-panel hidden space-y-5">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
-            <h2 class="text-base font-black text-slate-900">➕ 단어 직접 추가</h2>
-            <form id="formAddCustomWord" class="space-y-3">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <input type="text" id="customWordInput" required placeholder="단어 *" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-                <select id="customPosInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"><option value="n.">명사 (n.)</option><option value="v.">동사 (v.)</option><option value="adj.">형용사 (adj.)</option><option value="adv.">부사 (adv.)</option><option value="phrase">표현 (phrase)</option></select>
-                <select id="customDayInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"></select>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <input type="text" id="customKorInput" required placeholder="한국어 뜻 *" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-                <input type="text" id="customEngDefInput" placeholder="보조 설명 / 로마자 (선택)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-              </div>
-              <input type="text" id="customExEnInput" required placeholder="예문 *" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-              <input type="text" id="customExKoInput" required placeholder="예문 해석 *" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-              <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 text-white font-bold text-sm transition">+ 단어장 추가</button>
-            </form>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
-            <div class="flex items-center justify-between"><h2 class="text-base font-black text-slate-900">💾 학습 메모 & 백업</h2><span id="driveSyncBadgeText" class="text-[11px] font-bold text-emerald-600">로컬 저장됨</span></div>
-            <textarea id="personalStudyMemo" rows="4" placeholder="학습 메모..." class="w-full rounded-xl border border-slate-300 p-3 text-sm focus:outline-none"></textarea>
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <div>누적 시간: <strong id="dataTotalStudyTime">0분</strong></div>
-              <div>총 단어: <strong id="dataTotalVocabCount">100개</strong></div>
-              <div>시험 횟수: <strong id="dataTotalExamsCount">0회</strong></div>
-              <div>최근 저장: <strong id="dataLastSavedTime">-</strong></div>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <button type="button" id="btnOpenHostAdminFromData" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">☁️ 호스트 중앙 서버 · 관리자</button>
-              <button type="button" id="btnExportData" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">📥 백업 저장</button>
-              <label class="px-3.5 py-2 rounded-xl bg-slate-800 text-white text-xs font-bold cursor-pointer">📤 백업 불러오기<input type="file" id="inputImportData" accept=".json" class="hidden" /></label>
-              <button type="button" id="btnOpenResetModal" class="px-3.5 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold">초기화</button>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
   <nav id="iosBottomTabBar" aria-label="Bottom Navigation" class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/90 px-1.5 pt-1.5 pb-[calc(6px+env(safe-area-inset-bottom,0px))]">
-    <div class="max-w-lg mx-auto grid grid-cols-6 gap-0.5">
+    <div class="max-w-lg mx-auto grid grid-cols-5 gap-0.5">
       <button type="button" data-bottom-tab="today" class="ios-bottom-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-indigo-600 font-extrabold transition"><span class="text-base leading-none">📅</span><span class="text-[10px] mt-1">루틴</span></button>
       <button type="button" data-bottom-tab="vocab" class="ios-bottom-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition"><span class="text-base leading-none">📘</span><span class="text-[10px] mt-1">단어장</span></button>
       <button type="button" data-bottom-tab="grammar" class="ios-bottom-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition"><span class="text-base leading-none">✍️</span><span class="text-[10px] mt-1">문법</span></button>
       <button type="button" data-bottom-tab="exam" class="ios-bottom-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition"><span class="text-base leading-none">📝</span><span class="text-[10px] mt-1">시험</span></button>
       <button type="button" data-bottom-tab="wrongnote" class="ios-bottom-tab-btn relative flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition"><span class="text-base leading-none">🔖</span><span class="text-[10px] mt-1">오답</span><span id="iosBottomWrongBadge" class="absolute top-0.5 right-2.5 px-1 min-w-[16px] h-4 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center">0</span></button>
-      <button type="button" data-bottom-tab="data" class="ios-bottom-tab-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition"><span class="text-base leading-none">💾</span><span class="text-[10px] mt-1">추가·백업</span></button>
     </div>
   </nav>
   <div id="toastContainer" class="fixed bottom-16 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 border border-slate-200 shadow-xl space-y-4">
-      <h3 class="text-base font-black text-slate-900">학습 데이터를 초기화할까요?</h3>
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button type="button" id="btnCancelReset" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">취소</button>
-        <button type="button" id="btnConfirmReset" class="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold">초기화</button>
-      </div>
-    </div>
-  </div>
   <div id="longPressTranslatorPopover" class="fixed z-50 hidden max-w-xs sm:max-w-sm w-80 bg-white rounded-2xl border-2 border-indigo-600 shadow-2xl p-4 space-y-3 popover-animate">
     <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
       <div>
@@ -351,44 +302,18 @@
       </div>
       <div id="googleSignedInInfo" class="hidden p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1.5">
         <p class="text-xs font-bold text-emerald-800">로그인됨: <span id="googleUserEmailDisplay">-</span></p>
-        <p class="text-xs text-emerald-700">저장 위치: <span id="googleHostStatusDisplay" class="font-semibold">-</span></p>
+        <p class="text-xs text-emerald-700">자동 저장: <span id="googleHostStatusDisplay" class="font-semibold">실시간 Google Drive 자동 동기화</span></p>
         <div class="flex gap-2 pt-2">
-          <button type="button" id="btnManualHostSyncNow" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">호스트 서버에 지금 저장</button>
-          <button type="button" id="btnGoogleSignOut" class="px-3 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold">로그아웃</button>
+          <button type="button" id="btnGoogleSignOut" class="w-full py-2 rounded-xl bg-rose-600 text-white text-xs font-bold">로그아웃</button>
         </div>
       </div>
       <div id="googleSignInForm" class="space-y-3">
-        <p class="text-xs text-slate-600">Google 아이디로 로그인하면 호스트 중앙 저장소에 내 학습 진도가 아이디별로 안전하게 저장됩니다.</p>
+        <p class="text-xs text-slate-600">Google 아이디로 로그인하면 기존에 공부하던 진도와 기록이 자동으로 불러와지며 실시간으로 저장됩니다.</p>
         <div class="space-y-1.5">
           <label class="block text-xs font-bold text-slate-700">Google OAuth Client ID</label>
           <input type="text" id="googleClientIdInput" placeholder="Client ID 입력 (1회 저장)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono" />
         </div>
         <button type="button" id="btnStartGoogleSignIn" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm">Google 아이디로 로그인</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="hostAdminModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-base font-black text-slate-900">⚙️ 호스트 중앙 저장소 & 관리자</h3>
-        <button type="button" id="btnCloseHostAdminModal" class="text-slate-400 font-bold px-2">✕</button>
-      </div>
-      <div class="space-y-2.5">
-        <label class="block text-xs font-bold text-slate-700">호스트 중앙 서버 웹 앱 URL (Apps Script)</label>
-        <div class="flex gap-2">
-          <input type="url" id="hostServerUrlInput" placeholder="https://.../exec" class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono" />
-          <button type="button" id="btnSaveHostServerUrl" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">저장·연결</button>
-        </div>
-        <p class="text-[11px] text-slate-500">호스트의 Google Drive(<code>Scuderia_Host_Central_Student_DB</code>)에 모든 학습자의 진도가 중앙 저장됩니다.</p>
-      </div>
-      <div class="pt-3 border-t border-slate-100 space-y-2.5">
-        <label class="block text-xs font-bold text-slate-700">호스트 관리자 비밀번호 (전체 학습자 조회)</label>
-        <div class="flex gap-2">
-          <input type="password" id="hostAdminPasscodeInput" placeholder="관리자 비밀번호 입력" class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
-          <button type="button" id="btnFetchHostUsers" class="px-3.5 py-2 rounded-xl bg-zinc-900 text-white text-xs font-bold">전체 학습자 조회</button>
-        </div>
-        <div id="hostUsersListContainer" class="pt-1"></div>
       </div>
     </div>
   </div>
@@ -1902,7 +1827,6 @@
       } catch (e) {}
       scheduleHostAutoSync();
       updateTopDashboardStats();
-      updateDataTabStats();
       renderUserIdSelector();
     }
 
@@ -1978,44 +1902,6 @@
         hostSyncState.syncing = false;
       }
       return false;
-    }
-
-    async function fetchAllHostUsers(adminKey) {
-      const url = getHostServerUrl();
-      const listEl = document.getElementById("hostUsersListContainer");
-      if (!url) {
-        showToast("호스트 중앙 서버 URL을 먼저 입력하고 저장하세요.", "warn");
-        return;
-      }
-      if (!adminKey) {
-        showToast("호스트 관리자 비밀번호를 입력해 주세요.", "warn");
-        return;
-      }
-      try {
-        if (listEl) listEl.innerHTML = `<p class="text-xs text-slate-500 py-3">조회 중...</p>`;
-        const res = await fetch(`${url}?action=list_users&adminKey=${encodeURIComponent(adminKey)}`);
-        const json = safeJsonParse(await res.text());
-        if (!json || !json.ok) {
-          if (listEl) listEl.innerHTML = `<p class="text-xs text-rose-600 font-bold py-2">인증 실패 또는 서버 오류: ${escapeHtml((json && json.error) || "Unauthorized")}</p>`;
-          return;
-        }
-        const users = json.users || [];
-        if (users.length === 0) {
-          listEl.innerHTML = `<p class="text-xs text-slate-500 py-3">저장된 학습자 데이터가 아직 없습니다.</p>`;
-          return;
-        }
-        listEl.innerHTML = `<div class="max-h-56 overflow-y-auto border border-slate-200 rounded-xl"><table class="w-full text-left border-collapse text-xs">
-          <thead class="bg-slate-50 border-b border-slate-200 text-slate-500"><tr><th class="py-2 px-2.5">ID / Google</th><th class="py-2 px-2">영어</th><th class="py-2 px-2">일본어</th><th class="py-2 px-2">최근 저장</th></tr></thead>
-          <tbody>${users.map(u => `<tr class="border-b border-slate-100">
-            <td class="py-2 px-2.5 font-bold text-slate-800">${escapeHtml(u.userId)}${u.email ? `<br><span class="text-[10px] font-normal text-slate-500">${escapeHtml(u.email)}</span>` : ""}</td>
-            <td class="py-2 px-2 font-semibold text-indigo-600">Day ${Number(u.enDay) || 1}</td>
-            <td class="py-2 px-2 font-semibold text-rose-600">Day ${Number(u.jaDay) || 1}</td>
-            <td class="py-2 px-2 text-[10px] text-slate-500">${escapeHtml(String(u.updatedAt || "").slice(0, 16).replace("T", " "))}</td>
-          </tr>`).join("")}</tbody>
-        </table></div>`;
-      } catch (e) {
-        if (listEl) listEl.innerHTML = `<p class="text-xs text-rose-600 font-bold py-2">호스트 서버 통신 오류</p>`;
-      }
     }
 
     // =========================================================================
@@ -2997,39 +2883,11 @@
       container.querySelectorAll(".btn-del-wrong").forEach(btn => btn.addEventListener("click", () => { appState.wrongAnswerNotes.splice(Number(btn.getAttribute("data-del-wn")), 1); saveState(); renderWrongNoteTab(); }));
     }
 
-    function updateDataTabStats() {
-      const savedEl = document.getElementById("dataLastSavedTime");
-      if (savedEl) savedEl.textContent = appState.lastSavedAt || "-";
-      const timeEl = document.getElementById("dataTotalStudyTime");
-      if (timeEl) timeEl.textContent = `${Math.floor((appState.totalStudySeconds || 0) / 60)}분`;
-      const vocabEl = document.getElementById("dataTotalVocabCount");
-      if (vocabEl) vocabEl.textContent = `${getAllWords().length}개`;
-      const exEl = document.getElementById("dataTotalExamsCount");
-      if (exEl) exEl.textContent = `${(appState.examHistory || []).length}회`;
-      const memoEl = document.getElementById("personalStudyMemo");
-      if (memoEl && document.activeElement !== memoEl) memoEl.value = appState.personalMemo || "";
-    }
-
-    function switchMainTab(tabName) {
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
-      const target = document.getElementById(`tab-${tabName}`);
-      if (target) target.classList.remove("hidden");
-      document.querySelectorAll(".nav-tab-btn").forEach(btn => {
-        btn.className = btn.getAttribute("data-tab") === tabName
-          ? "nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-sm"
-          : "nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-1.5 text-slate-600 hover:bg-slate-200/70";
-      });
-      document.querySelectorAll(".ios-bottom-tab-btn").forEach(btn => {
-        btn.className = btn.getAttribute("data-bottom-tab") === tabName
-          ? "ios-bottom-tab-btn relative flex flex-col items-center justify-center py-1 rounded-xl text-indigo-600 bg-indigo-50/80 font-extrabold transition"
-          : "ios-bottom-tab-btn relative flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 font-semibold transition";
-      });
       if (tabName === "today") renderTodayRoutine();
       if (tabName === "vocab") renderVocabTab();
       if (tabName === "grammar") renderGrammarTab();
       if (tabName === "exam") renderExamTab();
       if (tabName === "wrongnote") renderWrongNoteTab();
-      if (tabName === "data") { populateVocabDayFilter(); updateDataTabStats(); }
     }
 
     function switchStudioLanguagePage(targetLang, skipToast) {
@@ -3070,7 +2928,6 @@
       renderGrammarTab();
       renderExamTab();
       renderWrongNoteTab();
-      updateDataTabStats();
       renderUserIdSelector();
       if (!skipToast) showToast(targetLang === "ja" ? "🇯🇵 일본어 페이지" : "🇺🇸 영어 페이지", "success");
     }
@@ -3146,8 +3003,6 @@
         if (savedCid) document.getElementById("googleClientIdInput").value = savedCid;
         const savedHostUrl = getHostServerUrl();
         if (savedHostUrl) {
-          document.getElementById("hostServerUrlInput").value = savedHostUrl;
-          document.getElementById("driveSyncBadgeText").textContent = "호스트 중앙 DB 실시간 연결됨";
           loadProfileFromHostServer(activeUserId, true);
         }
       } catch (e) {}
@@ -3220,34 +3075,11 @@
       document.getElementById("btnGoogleAuthStatus").addEventListener("click", openGModal);
       document.getElementById("btnCloseGoogleAuthModal").addEventListener("click", closeGModal);
       document.getElementById("btnStartGoogleSignIn").addEventListener("click", startGoogleSignInFlow);
-      document.getElementById("btnManualHostSyncNow").addEventListener("click", () => saveProfileToHostServer(false));
       document.getElementById("btnGoogleSignOut").addEventListener("click", () => {
         googleAuthState = { signedIn: false, email: "", name: "", accessToken: "", tokenClient: null };
         updateGoogleAuthUI();
         closeGModal();
         showToast("Google 로그아웃 완료", "info");
-      });
-
-      // Host Central Server & Admin Modal
-      const openHostModal = () => { const m = document.getElementById("hostAdminModal"); m.classList.remove("hidden"); m.classList.add("flex"); };
-      const closeHostModal = () => { const m = document.getElementById("hostAdminModal"); m.classList.add("hidden"); m.classList.remove("flex"); };
-      document.getElementById("btnOpenHostAdminModal").addEventListener("click", openHostModal);
-      document.getElementById("btnOpenHostAdminFromData").addEventListener("click", openHostModal);
-      document.getElementById("btnCloseHostAdminModal").addEventListener("click", closeHostModal);
-      document.getElementById("btnSaveHostServerUrl").addEventListener("click", () => {
-        const url = document.getElementById("hostServerUrlInput").value.trim();
-        if (url && !url.startsWith("https://")) {
-          showToast("https:// 로 시작하는 Google Apps Script 웹 앱 URL을 입력하세요.", "warn");
-          return;
-        }
-        try { localStorage.setItem(HOST_SERVER_URL_KEY, url); } catch (e) {}
-        hostSyncState.serverUrl = url;
-        updateGoogleAuthUI();
-        saveProfileToHostServer(false);
-      });
-      document.getElementById("btnFetchHostUsers").addEventListener("click", () => {
-        const key = document.getElementById("hostAdminPasscodeInput").value.trim();
-        fetchAllHostUsers(key);
       });
 
       document.getElementById("btnSwitchPageEnglish").addEventListener("click", () => switchStudioLanguagePage("en"));
@@ -3280,48 +3112,6 @@
       document.getElementById("grammarDaySelect").addEventListener("change", renderGrammarTab);
       document.getElementById("btnStartNewExam").addEventListener("click", startNewExam);
       document.getElementById("btnQuickWrongQuiz").addEventListener("click", () => { document.getElementById("examScopeSelect").value = "weak_only"; switchMainTab("exam"); startNewExam(); });
-      document.getElementById("formAddCustomWord").addEventListener("submit", e => {
-        e.preventDefault();
-        const word = document.getElementById("customWordInput").value.trim().slice(0, 80);
-        const pos = document.getElementById("customPosInput").value;
-        const day = Number(document.getElementById("customDayInput").value || 1);
-        const kor = document.getElementById("customKorInput").value.trim().slice(0, 120);
-        const engDef = document.getElementById("customEngDefInput").value.trim().slice(0, 160);
-        const exEn = document.getElementById("customExEnInput").value.trim().slice(0, 240);
-        const exKo = document.getElementById("customExKoInput").value.trim().slice(0, 240);
-        if (!word || !kor || !exEn || !exKo) return;
-        const nw = { id: "custom_" + Date.now(), day, word, phonetic: "", pos, kor, engDef, exEn, exKo };
-        appState.customWords.push(nw);
-        appState.vocabStatus[nw.id] = "learning";
-        saveState();
-        e.target.reset();
-        showToast("추가됨", "success");
-      });
-      document.getElementById("personalStudyMemo").addEventListener("input", e => { appState.personalMemo = e.target.value.slice(0, 5000); saveState(); });
-      document.getElementById("btnExportData").addEventListener("click", () => {
-        const blob = new Blob([JSON.stringify(appState, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a"); a.href = url; a.download = `scuderia_${activeStudioLang}_${activeUserId}_backup.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-      });
-      document.getElementById("inputImportData").addEventListener("change", e => {
-        const file = e.target.files && e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = ev => {
-          try {
-            const parsed = safeJsonParse(ev.target.result);
-            if (parsed && typeof parsed === "object") {
-              appState = Object.assign(createDefaultState(), parsed, { userId: activeUserId });
-              saveState();
-              renderTodayRoutine();
-              showToast("복원 완료", "success");
-            }
-          } catch (err) { showToast("잘못된 백업 파일입니다.", "warn"); }
-        };
-        reader.readAsText(file);
-      });
-      document.getElementById("btnOpenResetModal").addEventListener("click", () => { const m = document.getElementById("resetModal"); m.classList.remove("hidden"); m.classList.add("flex"); });
-      document.getElementById("btnCancelReset").addEventListener("click", () => { const m = document.getElementById("resetModal"); m.classList.add("hidden"); m.classList.remove("flex"); });
-      document.getElementById("btnConfirmReset").addEventListener("click", () => { appState = createDefaultState(); saveState(); const m = document.getElementById("resetModal"); m.classList.add("hidden"); m.classList.remove("flex"); renderTodayRoutine(); });
     });
   </script>
 </body>
